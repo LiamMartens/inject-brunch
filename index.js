@@ -5,7 +5,7 @@ class BrunchInjectPlugin {
     constructor(config) {
         this.config = config.plugins.inject || {};
         if(!this.config.fn) this.config.fn = 'inject';
-        if(!this.config.parse) this.config.parse = data => data;
+        if(!this.config.parse) this.config.parse = (data, filename) => data;
     }
 
     compile({data, path: file}) {
@@ -15,7 +15,7 @@ class BrunchInjectPlugin {
             if(matches && matches.length>1) {
                 const inject_file = matches[1].replace(/^'/, '').replace(/'$/, '');
                 const fullpath = path.join(path.dirname(file), inject_file);
-                const inject_data = this.config.parse(fs.readFileSync(fullpath).toString().replace(/'/, '\\\'').split(/\r|\n/).join('\'+\''));
+                const inject_data = this.config.parse(fs.readFileSync(fullpath).toString().replace(/'/, '\\\'').split(/\r|\n/).join('\'+\''), inject_file);
                 data = data.replace(rx, '\''+inject_data+'\'');
             }
         }
