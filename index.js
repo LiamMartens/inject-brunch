@@ -9,7 +9,7 @@ class BrunchInjectPlugin {
     }
 
     compile({data, path: file}) {
-        const rx = new RegExp('\\s+'+this.config.fn+'\\((.+?)\\)', 'm');
+        const rx = new RegExp('[^a-zA-Z0-9_]'+this.config.fn+'\\((.+?)\\)', 'm');
         let matches;
         while((matches=rx.exec(data))!=undefined) {
             if(matches && matches.length>1) {
