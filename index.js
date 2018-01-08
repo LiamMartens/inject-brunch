@@ -9,15 +9,16 @@ class BrunchInjectPlugin {
     }
 
     compile({data, path: file}) {
-        const rx = new RegExp('[^a-zA-Z0-9_]'+this.config.fn+'\\((.+?)\\)', 'm');
+        const rx = new RegExp('([^a-zA-Z0-9_])'+this.config.fn+'\\((.+?)\\)', 'm');
         let matches;
         while((matches=rx.exec(data))!=undefined) {
             if(matches && matches.length>1) {
-                const inject_file = matches[1].replace(/^'/, '').replace(/'$/, '');
+                const inject_file = matches[2].replace(/^'/, '').replace(/'$/, '');
                 const extension = path.extname(inject_file).replace(/^\.+/, '');
                 const fullpath = path.join(path.dirname(file), inject_file);
                 const inject_data = this.config.parse(fs.readFileSync(fullpath).toString().replace(/'/, '\\\'').split(/\r|\n/).join('\'+\''), inject_file, extension);
-                data = data.replace(rx, '\''+inject_data+'\'');
+                data = data.replace(rx, matches[1]+'\''+inject_data+'\'');
+                fs.writeFileSync('file.js', data);
             }
         }
         return Promise.resolve({
