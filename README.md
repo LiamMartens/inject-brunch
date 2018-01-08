@@ -12,7 +12,7 @@ module.exports.plugins = {
     inject: {
         // customize the inject function name
         fn: 'inject',
-        parse: function(data) {
+        parse: function(data, filename, extension) {
             // here you can customize the data parser
             // can be omitted
             return yourparser(data);
@@ -25,5 +25,5 @@ module.exports.plugins = {
 Using the default config you will have something like this
 ```
 // injected data will be wrapped in single quotes
-const data = inject('file');
+const data = inject('file',);
 ```
