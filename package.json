@@ -1,20 +1,24 @@
 {
   "name": "inject-brunch",
-  "version": "1.0.6",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.7",
+  "description": "Injects files into other files",
+  "author": "Liam Martens",
+  "homepage": "https://github.com/LiamMartens/inject-brunch",
+  "license": "ISC",
   "scripts": {
-
+    "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LiamMartens/inject-brunch.git"
+    "url": "git@github.com:LiamMartens/inject-brunch.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/LiamMartens/inject-brunch/issues"
   },
-  "homepage": "https://github.com/LiamMartens/inject-brunch#readme"
+  "devDependencies": {
+    "jest": "^22.1.4"
+  },
+  "dependencies": {
+    "escape-quotes": "^1.0.2"
+  }
 }

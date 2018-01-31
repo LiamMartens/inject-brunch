@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const escape_quotes = require('escape-quotes');
 
 class BrunchInjectPlugin {
     constructor(config) {
@@ -8,22 +9,28 @@ class BrunchInjectPlugin {
         if(!this.config.parse) this.config.parse = (data, filename, extension) => data;
     }
 
-    compile({data, path: file}) {
+    compile(file) {
+        // don't compile empty files or data
+        if(!file || !file.data) return Promise.resolve(file);
+
+        // resolve data to string
+        file.data = file.data.toString();
+
+        // find file injections
         const rx = new RegExp('([^a-zA-Z0-9_])'+this.config.fn+'\\((.+?)\\)', 'm');
         let matches;
-        while((matches=rx.exec(data))!=undefined) {
-            if(matches && matches.length>1) {
-                const inject_file = matches[2].replace(/^'/, '').replace(/'$/, '');
+        while((matches=rx.exec(file.data)) != undefined) {
+            if(matches && matches.length > 1) {
+                const inject_file = matches[2].replace(/^'+/, '').replace(/'+$/, '');
                 const extension = path.extname(inject_file).replace(/^\.+/, '');
-                const fullpath = path.join(path.dirname(file), inject_file);
-                const inject_data = this.config.parse(fs.readFileSync(fullpath).toString().replace(/'/, '\\\'').split(/\r|\n/).join('\'+\''), inject_file, extension);
-                data = data.replace(rx, matches[1]+'\''+inject_data+'\'');
-                fs.writeFileSync('file.js', data);
+                const fullpath = inject_file.startsWith('/') ? inject_file : path.join(path.dirname(file.path), inject_file);
+                const inject_data = this.config.parse(escape_quotes(fs.readFileSync(fullpath).toString()).split(/\r|\n/).join('\'+\''), inject_file, extension);
+                file.data = file.data.replace(rx, matches[1]+'\''+inject_data+'\'');
             }
         }
-        return Promise.resolve({
-            data: data
-        });
+
+        // resolve new data
+        return Promise.resolve(file);
     }
 }
 
