@@ -24,7 +24,7 @@ class BrunchInjectPlugin {
                 const inject_file = matches[2].replace(/^'+/, '').replace(/'+$/, '');
                 const extension = path.extname(inject_file).replace(/^\.+/, '');
                 const fullpath = inject_file.startsWith('/') ? inject_file : path.join(path.dirname(file.path), inject_file);
-                const inject_data = this.config.parse(escape_quotes(fs.readFileSync(fullpath).toString()).split(/\r|\n/).join('\'+\''), inject_file, extension);
+                const inject_data = this.config.parse(escape_quotes(fs.readFileSync(fullpath).toString()).split(/\r|\n/).join('\\n'), inject_file, extension);
                 file.data = file.data.replace(rx, matches[1]+'\''+inject_data+'\'');
             }
         }
